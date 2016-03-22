@@ -13,7 +13,8 @@ describe "echo service" do
 
     server.on(:accept) do |client|
       client.on(:data) do |data|
-        client.write(data)
+        client.push(data)
+        client.handle_write
       end
     end
 

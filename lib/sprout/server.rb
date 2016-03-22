@@ -10,12 +10,13 @@ module Sprout
 
     # NOTE
     # This is where we pull client connections off
-    # of the listen queue. At this point the server
-    # socket will have data to read from its Recv-Q.
+    # of the listen queue. When our server becomes
+    # readable that means its underlying socket
+    # has data to read from its Recv-Q.
     def handle_read
       begin
-        client = socket.accept_nonblock
-        emit(:accept, client)
+        client, addr = socket.accept_nonblock
+        emit(:accept, Stream.new(socket: client, address: addr))
       rescue IOError
       end
     end

@@ -5,6 +5,7 @@ require "thread"
 require "events"
 
 require_relative "./server"
+require_relative "./stream"
 
 module Sprout
   class Reactor
@@ -21,7 +22,7 @@ module Sprout
       addr   = Socket.pack_sockaddr_in(port, host)
 
       socket.bind(addr)
-      socket.listen(1)
+      socket.listen(5)
 
       # Wrap the socket in our server class.
       server = Server.new(socket: socket)
@@ -29,6 +30,10 @@ module Sprout
       # Add the server to our collection of evented
       # stream objects.
       register(server)
+
+      server.on(:accept) do |client|
+        register(client)
+      end
 
       server
     end
@@ -56,6 +61,10 @@ module Sprout
 
       def register(stream)
         @streams << stream
+
+        stream.on(:close) do
+          @streams.delete(stream)
+        end
       end
 
   end
