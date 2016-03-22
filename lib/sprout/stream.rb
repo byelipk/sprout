@@ -42,6 +42,7 @@ module Sprout
       # raise IOError. So we'll just return now as this
       # is the last time we'll see this socket.
       return if socket.closed?
+      return if buffer.empty?
 
       # NOTE
       # If an exception is raised on a nonblocking
