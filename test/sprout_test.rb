@@ -8,7 +8,7 @@ require 'sprout/reactor'
 
 describe "echo service" do
   it "works" do
-    reactor = Sprout::Reactor.new
+    reactor = Sprout::Reactor.new blocking: true
     server  = reactor.listen('127.0.0.1', 3000)
 
     server.on(:accept) do |client|
