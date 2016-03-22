@@ -19,6 +19,10 @@ describe "echo service" do
 
     reactor.start
 
+    # NOTE
+    # At this point, if our reactor does not accept
+    # client connections, the socket opened up by netcat
+    # will remain in the listen queue.
     `echo foo | nc localhost 3000`.strip.must_equal "foo"
   end
 end
