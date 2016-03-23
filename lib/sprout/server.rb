@@ -28,5 +28,10 @@ module Sprout
     def to_io
       socket
     end
+
+    def welcome
+      puts "Running Sprout::Reactor"
+      puts "Listening on #{socket.local_address.ip_address}:#{socket.local_address.ip_port}..."
+    end
   end
 end

@@ -27,6 +27,9 @@ module Sprout
       # Wrap the socket in our server class.
       server = Server.new(socket: socket)
 
+      # Print info to console
+      server.welcome
+
       # Add the server to our collection of evented
       # stream objects.
       register(server)
