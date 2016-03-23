@@ -30,6 +30,11 @@ module Sprout
         #
         # So we need to close off our end and remove
         # the stream from our collection of streams.
+        #
+        # Note that closing the socket does not remove the
+        # stream from the collection of writable streams.
+        # So this socket will raise an exception within the
+        # |handle_write| method if we try to write to it.
         close
       end
     end
