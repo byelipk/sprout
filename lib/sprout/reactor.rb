@@ -88,9 +88,9 @@ module Sprout
 
       def handle_signals!
         Signal.trap(:INT) do
-          streams.each { |stream| stream.emit(:close) }
           puts
           puts "Shutting down Reactor..."
+          streams.each { |stream| stream.emit(:close) }
           exit(1)
         end
       end
