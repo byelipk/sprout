@@ -11,7 +11,7 @@ module Sprout
   class Reactor
     attr_reader :streams, :blocking
 
-    def initialize(blocking: false)
+    def initialize(blocking: true)
       @streams  = Array.new
       @blocking = blocking
     end
@@ -32,6 +32,13 @@ module Sprout
       register(server)
 
       server.on(:accept) do |client|
+        # NOTE
+        # The effect of setting this option is that
+        # we will only be able to write 1 byte into
+        # the socket per event loop tick.
+        client.socket.setsockopt(:SOCKET, :SNDBUF, 1)
+        # client.socket.setsockopt(:SOCKET, :RCVBUF, 1)
+
         register(client)
       end
 
@@ -39,7 +46,7 @@ module Sprout
     end
 
     def start
-      unless blocking
+      if blocking
         loop { tick }
       else
         Thread.abort_on_exception = true
