@@ -11,6 +11,8 @@ class FriendlyEchoServer
 
   def initialize(client)
     @client = client
+
+    log("connected")
   end
 
   def serve
@@ -18,6 +20,14 @@ class FriendlyEchoServer
       client.push(raw)
       client.handle_write
     end
+
+    client.on(:close) do
+      log("disconnected")
+    end
+  end
+
+  def log(status)
+    puts "[#{client.address.ip_address}:#{client.address.ip_port}] Client #{status}"
   end
 end
 
