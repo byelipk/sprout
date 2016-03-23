@@ -12,9 +12,18 @@ describe "echo service" do
     server  = reactor.listen('127.0.0.1', 3000)
 
     server.on(:accept) do |client|
+      # We have a new client socket connection!
+
+      # NOTE
+      # We have pulled data out of the client socket
+      # and exposed it through the callback API.
+      # This is where we build our echo server.
+      # Notice that we are not performing any kind
+      # of processing on the data. We are just writing
+      # what we get back into the client socket.
       client.on(:data) do |data|
-        client.push(data)
-        client.handle_write
+        client.push(data)   # Push data into the buffer
+        client.handle_write # Execute write operation
       end
     end
 
