@@ -62,6 +62,7 @@ module Sprout
     def method_missing(method, *args, &callback)
       send_command(method, *args)
       callbacks.push(callback)
+      # yield "Hello world"
     end
   end
 end
