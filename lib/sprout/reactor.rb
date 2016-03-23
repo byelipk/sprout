@@ -22,7 +22,7 @@ module Sprout
       addr   = Socket.pack_sockaddr_in(port, host)
 
       socket.bind(addr)
-      socket.listen(5)
+      socket.listen(Socket::SOMAXCONN)
 
       # Wrap the socket in our server class.
       server = Server.new(socket: socket)
@@ -46,6 +46,18 @@ module Sprout
       end
 
       server
+    end
+
+    def connect(host, port)
+      # TODO
+      # When TCPSocket returns the 3-way-handshake is
+      # complete. But this should really be non-blocking.
+      socket = TCPSocket.new(host, port)
+      stream = Stream.new(socket: socket)
+
+      register(stream)
+
+      stream
     end
 
     def start
@@ -90,7 +102,7 @@ module Sprout
         Signal.trap(:INT) do
           puts
           puts "Shutting down Reactor..."
-          streams.each { |stream| stream.emit(:close) }
+          streams.each { |stream| stream.close }
           exit(1)
         end
       end

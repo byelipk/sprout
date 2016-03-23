@@ -33,5 +33,10 @@ module Sprout
       puts "Running Sprout::Reactor"
       puts "Listening on #{socket.local_address.ip_address}:#{socket.local_address.ip_port}..."
     end
+
+    def close
+      emit(:close)
+      socket.close
+    end
   end
 end
