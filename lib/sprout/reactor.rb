@@ -49,6 +49,8 @@ module Sprout
     end
 
     def start
+      handle_signals!
+
       if blocking
         loop { tick }
       else
@@ -82,6 +84,15 @@ module Sprout
 
       def log
         puts "[Reactor] #{streams.length - 1} connected clients"
+      end
+
+      def handle_signals!
+        Signal.trap(:INT) do
+          streams.each { |stream| stream.emit(:close) }
+          puts
+          puts "Shutting down Reactor..."
+          exit(1)
+        end
       end
 
   end
