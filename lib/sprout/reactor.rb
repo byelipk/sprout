@@ -71,7 +71,14 @@ module Sprout
 
         stream.on(:close) do
           @streams.delete(stream)
+          log
         end
+
+        log
+      end
+
+      def log
+        puts "[Reactor] #{streams.length - 1} connected clients"
       end
 
   end
