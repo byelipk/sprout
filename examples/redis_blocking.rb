@@ -18,8 +18,8 @@ class RedisBlockingHandler
     # When we read the data the client connection
     # has sent us...
     client.on(:data) do |data|
-      timeout  = 3
-      redis    = Redis.new
+      timeout = 3
+      redis   = Redis.new
 
       begin
         # NOTE
