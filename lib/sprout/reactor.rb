@@ -39,7 +39,7 @@ module Sprout
         # The effect of setting this option is that
         # we will only be able to write 1 byte into
         # the socket per event loop tick.
-        client.socket.setsockopt(:SOCKET, :SNDBUF, 1)
+        # client.socket.setsockopt(:SOCKET, :SNDBUF, 1)
         # client.socket.setsockopt(:SOCKET, :RCVBUF, 1)
 
         register(client)
