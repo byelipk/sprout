@@ -40,13 +40,6 @@ module Sprout
     end
 
     def handle_write
-      # NOTE
-      # Since we process our readables queue before
-      # our writables queue it's possible we've already
-      # closed off the socket. Writing to it now would
-      # raise IOError. So we'll just return now as this
-      # is the last time we'll see this socket.
-      return if socket.closed?
       return if buffer.empty?
 
       # NOTE
@@ -59,6 +52,11 @@ module Sprout
 
       rescue Errno::EAGAIN
       rescue EOFError
+        # NOTE
+        # Since we process our readables queue before
+        # our writables queue it's possible we've already
+        # closed off the socket. Writing to it now would
+        # raise IOError.
       end
     end
 
@@ -69,6 +67,7 @@ module Sprout
     def close
       emit(:close)
       socket.close
+      socket = nil
     end
 
   end
