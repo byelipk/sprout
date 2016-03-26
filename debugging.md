@@ -31,3 +31,5 @@ We will use Sprout as a control because the reactor exists the behavior we expec
  * `Sprout::Stream#handle_read` was invoked 72341 times. A large proportion of these invocations occurred while the Redis connection was blocking.
 
  * I noticed that `Sprout::Stream` only calls close internally in its `handle_read` method if its socket connection is closed. This means it delegates responsibility for explicitly closing the connection to the API. For example, if we create an echo server on top of the reactor, we would explicitly close the connection as part of the implementation of the echo server!
+
+ * Another observation is that `Sprout::Stream#handle_write` does not rescue `EOFError`. So there are only two places where close is called from: the actual redis checker implementation and `#handle_read`
