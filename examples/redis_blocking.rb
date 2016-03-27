@@ -40,6 +40,7 @@ class RedisBlockingHandler
   def write(data)
     client.push(data.to_s)
     client.handle_write
+    client.close
   end
 end
 
