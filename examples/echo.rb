@@ -19,6 +19,7 @@ class FriendlyEchoServer
     client.on(:data) do |raw|
       client.push(raw)
       client.handle_write
+      client.close
     end
 
     client.on(:close) do
