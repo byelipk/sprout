@@ -13,7 +13,14 @@ module Sprout
     end
 
     def push(data)
-      @buffer << data
+      if data
+        @buffer << data
+      end
+    end
+
+    def push!(data)
+      push(data)
+      handle_write
     end
 
     def handle_read
@@ -35,7 +42,7 @@ module Sprout
         # stream from the collection of writable streams.
         # So this socket will raise an exception within the
         # |handle_write| method if we try to write to it.
-        close
+        close if socket.closed?
       end
     end
 
@@ -50,7 +57,7 @@ module Sprout
         bytes   = socket.write_nonblock(buffer)
         @buffer = buffer.slice(bytes, buffer.length)
 
-      rescue Errno::EAGAIN
+      rescue Errno::EAGAIN, Errno::EPIPE
       rescue EOFError
         # NOTE
         # Since we process our readables queue before

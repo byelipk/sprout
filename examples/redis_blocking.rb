@@ -1,4 +1,3 @@
-require 'minitest/autorun'
 require 'pathname'
 
 lib = Pathname.new(__FILE__).parent.parent.join('lib')

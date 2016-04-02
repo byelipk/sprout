@@ -1,4 +1,4 @@
-require 'minitest/autorun'
+require 'pry'
 require 'pathname'
 
 lib = Pathname.new(__FILE__).parent.parent.join('lib')
@@ -23,8 +23,12 @@ module Sprout
         reader.feed(data)
 
         until (reply = reader.gets) == false
+          # TODO
+          # Handle replies when they are arrays.
           receive_reply(reply)
         end
+
+        redis_connection.close
       end
     end
 
@@ -34,35 +38,26 @@ module Sprout
     end
 
     def send_command(*args)
-      # NOTE
-      # Redis uses a template for framing messages
-      # that we must conform to:
-      # *2\r\n
-      # $7\r\n
-      # awesome\r\n
-      # $5\r\n
-      # array\r\n
-
       args.flatten!
 
       # Push the start line into the redis_connection buffer.
-      redis_connection.push("*" << args.size.to_s << CRLF)
+      start = "*"
+      start << args.length.to_s << CRLF
+
+      redis_connection.push!(start)
 
       args.each do |arg|
-        # Push content length into redis_connection buffer.
-        redis_connection.push("$" << arg.size.to_s << CRLF)
+        line = "$"
+        line << arg.to_s.length.to_s << CRLF
+        line << arg.to_s << CRLF
 
-        # Push content into redis_connection buffer.
-        redis_connection.push(arg.to_s << CRLF)
+        redis_connection.push!(line)
       end
-
-      redis_connection.handle_write
     end
 
     def method_missing(method, *args, &callback)
       send_command(method, *args)
       callbacks.push(callback)
-      # yield "Hello world"
     end
   end
 end
@@ -101,8 +96,22 @@ reactor = Sprout::Reactor.new
 server  = reactor.listen '127.0.0.1', 3000
 
 server.on(:accept) do |client|
-  handler = RedisReactiveHandler.new(client, reactor)
-  handler.handle
+  # handler = RedisReactiveHandler.new(client, reactor)
+  # handler.handle
+
+  client.on(:data) do |data|
+    # We can use Sprout to create a new connection
+    # with the Redis server.
+    socket  = reactor.connect '127.0.0.1', 6379
+    redis   = Sprout::Redis.new(socket)
+    timeout = 3
+
+    redis.blpop(data.strip, timeout) do |reply|
+      # What do we do with our reply from Redis?
+      client.push!(reply)
+      client.close
+    end
+  end
 end
 
 reactor.start

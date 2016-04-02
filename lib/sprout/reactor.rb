@@ -102,6 +102,7 @@ module Sprout
         Signal.trap(:INT) do
           puts
           puts "Shutting down Reactor..."
+          puts "Closing #{streams.length} remaining streams."
           streams.each { |stream| stream.close }
           exit(1)
         end
