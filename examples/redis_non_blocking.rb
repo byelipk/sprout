@@ -25,7 +25,11 @@ module Sprout
         until (reply = reader.gets) == false
           # TODO
           # Handle replies when they are arrays.
-          receive_reply(reply)
+          if reply.respond_to? :last
+            receive_reply(reply.last)
+          else
+            receive_reply(reply)
+          end
         end
 
         redis_connection.close
