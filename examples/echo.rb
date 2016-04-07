@@ -1,9 +1,4 @@
-require 'pathname'
-
-lib = Pathname.new(__FILE__).parent.parent.join('lib')
-$LOAD_PATH << lib
-
-require 'sprout/reactor'
+require './examples/sprout_helper'
 
 class FriendlyEchoServer
   attr_reader :client

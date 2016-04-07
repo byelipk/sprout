@@ -1,10 +1,5 @@
-require 'pathname'
-
-lib = Pathname.new(__FILE__).parent.parent.join('lib')
-$LOAD_PATH << lib
-
+require './examples/sprout_helper'
 require 'redis'
-require 'sprout/reactor'
 
 class RedisBlockingHandler
   attr_reader :client

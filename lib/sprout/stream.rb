@@ -12,10 +12,8 @@ module Sprout
       @buffer  = String.new
     end
 
-    def push(data)
-      if data
-        @buffer << data
-      end
+    def push(data = String.new)
+      @buffer << data
     end
 
     def push!(data)
@@ -30,18 +28,14 @@ module Sprout
       rescue Errno::EAGAIN
       rescue EOFError
         # NOTE
-        # When the client closes its end of the TCP
-        # connection that triggers a readable event on
-        # the socket. When we try to read from the socket
-        # an end-of-file error is raised.
+        # For this architecture pattern we delegate
+        # explicitly closing the socket connection to
+        # the layer on top of the reactor.
         #
-        # So we need to close off our end and remove
-        # the stream from our collection of streams.
+        # This could be, for example, an echo server that
+        # would close the connection after writing data
+        # into the client socket.
         #
-        # Note that closing the socket does not remove the
-        # stream from the collection of writable streams.
-        # So this socket will raise an exception within the
-        # |handle_write| method if we try to write to it.
         close if socket.closed?
       end
     end
@@ -67,6 +61,7 @@ module Sprout
       end
     end
 
+    # Allow our stream to "walk like a duck".
     def to_io
       socket
     end
@@ -74,7 +69,7 @@ module Sprout
     def close
       emit(:close)
       socket.close
-      socket = nil
+      @socket = nil
     end
 
   end

@@ -1,11 +1,5 @@
-require 'pry'
-require 'pathname'
-
-lib = Pathname.new(__FILE__).parent.parent.join('lib')
-$LOAD_PATH << lib
-
+require './examples/sprout_helper'
 require 'hiredis/reader'
-require 'sprout/reactor'
 
 module Sprout
   class Redis
