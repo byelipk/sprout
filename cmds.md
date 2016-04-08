@@ -17,3 +17,9 @@ View such information on individual TCP connections as the process id, the comma
 ```
 lsof -i -n -P | grep TCP
 ```
+
+
+For Wireshark to work:
+```
+sudo chmod 777 /dev/bp*
+```
