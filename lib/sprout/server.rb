@@ -37,6 +37,7 @@ module Sprout
     def close
       emit(:close)
       socket.close
+      @socket = nil
     end
   end
 end
